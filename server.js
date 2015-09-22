@@ -8,6 +8,8 @@ var coordinates = {
 	y: 0
 }
 
+var _changed = true;
+
 app.use('/static', express.static(path.resolve('static')));
 app.use(bodyParser.json()); // for parsing application/json
 
@@ -18,14 +20,18 @@ app.get('/', function (req, res) {
 
 
 app.get('/coordinates', function (req, res) {
-	setTimeout(function () {
+	if (_changed) {
 		res.json(coordinates);
-	}, 500);
+		// _changed = false;
+	}
 });
 
 app.post('/coordinates', function (req, res) {
-	coordinates = req.body;
-	res.json(coordinates);
+	if (req.body && (req.body.x !== coordinates.x || req.body.y !== coordinates.y)) {
+		coordinates = req.body;
+		res.json(coordinates);
+		// _changed = true;
+	}
 })
 
 

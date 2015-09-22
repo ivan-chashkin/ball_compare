@@ -45,7 +45,6 @@ ballTarget.move({
 });
 
 Service.onStatChange(function (coords) {
-	console.log(coords)
 	ballTarget.move({
 		x: window.innerWidth / 2 + coords.x,
 		y: coords.y
