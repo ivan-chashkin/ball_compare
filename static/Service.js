@@ -8,6 +8,7 @@ var Service = (function (window) {
 	var callbacks = [];
 	var _xhr;
 	var _socket;
+	var iddle = true;
 
 	function isEqual (cords) {
 		return _coords.x === cords.x && _coords.y === cords.y;
@@ -62,6 +63,7 @@ var Service = (function (window) {
 		_socket.on('coordinates', function(coords){
 			_coords = coords;
 			callbacks.forEach(function (callback) {
+				iddle = true;
 				callback(coords);
 			});
 		});
@@ -96,19 +98,23 @@ var Service = (function (window) {
 		stop: function () {
 			dropXhr();
 			dropSocket();
+			iddle = true;
 		},
 
 		set: function (cords) {
 			if (!isEqual(cords)) {
 				_coords = cords;
-				if (_xhr) {
-					createXhr("POST", _coords);
-				} else if (_socket) {
-					_socket.emit('coordinates', _coords);
-				} else {
-					callbacks.forEach(function (callback) {
-						callback(cords);
-					});
+				if ( iddle ) {
+					iddle = false;
+					if (_xhr) {
+						createXhr("POST", _coords);
+					} else if (_socket) {
+						_socket.emit('coordinates', _coords);
+					} else {
+						callbacks.forEach(function (callback) {
+							callback(cords);
+						});
+					}
 				}
 			}
 		},
