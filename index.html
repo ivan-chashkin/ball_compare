@@ -20,19 +20,40 @@ html, body{
 	cursor: move;
 	position: absolute;
 }
+.select{
+	position: absolute;
+	top: 5px;
+	left: 50%;
+	-webkit-transform: translateX(-50%);
+	transform: translateX(-50%);
+	z-index: 1000;
+}
+.fps{
+	position: absolute;
+	left: 50%;
+	width: 300px;
+	text-align: center;
+	top: 200px;
+	-webkit-transform: translateX(-50%);
+	transform: translateX(-50%);
+	font-size: 150px;
+	font-family: monospace;
+}
 </style>
 </head>
 <body>
-
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 <script type="text/javascript" src="/static/Ball.js"></script>
 <script type="text/javascript" src="/static/Service.js"></script>
 
+<select class="select" onchange="start(event)">
+	<option value="sync">Sync</option>
+	<option value="xhr">XHR</option>
+	<option value="socket">WebSocket</option>
+</select>
+
 <script type="text/javascript">
 var ballSource = new Ball('ball');
-
-
-
-
 
 document.body.appendChild(ballSource.el);
 
@@ -59,9 +80,12 @@ ballSource.on('move', function(data){
 	});
 });
 
-
-// Server
-Service.start();
+var start = function(evt){
+	// Server
+	Service.start({
+		type: evt.target.value
+	});
+};
 </script>
 </body>
 </html>

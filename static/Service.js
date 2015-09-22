@@ -7,14 +7,17 @@ var Service = (function (window) {
 	};
 	var callbacks = [];
 	var _xhr;
+	var _socket;
 
 	function isEqual (cords) {
 		return _coords.x === cords.x && _coords.y === cords.y;
 	}
 
 	function dropXhr () {
-		_xhr.abort();
-		_xhr = void 0;
+		if (_xhr) {
+			_xhr.abort();
+			_xhr = void 0;
+		}
 	}
 
 	function createXhr (type, data) {
@@ -30,16 +33,15 @@ var Service = (function (window) {
 				//ОБработать данные
 
 				var coords = JSON.parse(_xhr.responseText);
-				// if (!isEqual(coords)) {
-					_coords = coords;
-					callbacks.forEach(function (callback) {
-						callback(_coords);
-					});
-				// }
+
+				_coords = coords;
+				callbacks.forEach(function (callback) {
+					callback(_coords);
+				});
 
 				createXhr("GET");
 			} else {
-				alert(_xhr.statusText) // вызвать обработчик ошибки с текстом ответа
+				console.log(_xhr.statusText) // вызвать обработчик ошибки с текстом ответа
 			}
 		}
 
@@ -52,28 +54,82 @@ var Service = (function (window) {
 
 	}
 
+	function createSocket() {
+		_socket = io.connect('http://'+window.location.host+'/', { forceNew:true });
+		_socket.on('connect', function(){
+			console.log('connect');
+		});
+		_socket.on('coordinates', function(coords){
+			_coords = coords;
+			callbacks.forEach(function (callback) {
+				callback(coords);
+			});
+		});
+		_socket.on('disconnect', function(){
+			console.log('connect');
+		});
+	}
+
+	function dropSocket() {
+		if (_socket) {
+			_socket.disconnect();
+			_socket = null;
+		}
+	}
+
+	var fpsLastFrameTimes = [];
+	var fpsEl = document.createElement('span');
+	fpsEl.className = 'fps';
+	fpsEl.innerHTML = 0;
+	document.body.appendChild(fpsEl);
+	function fpsMeter() {
+		fpsLastFrameTimes.push(new Date());
+
+		if (fpsLastFrameTimes.length > 30) {
+			var summ = 0;
+			var iterable = 0;
+			for (var i = fpsLastFrameTimes.length - 31; i < fpsLastFrameTimes.length - 1; i++ ) {
+				iterable++;
+				summ += fpsLastFrameTimes[i+1] - fpsLastFrameTimes[i];
+			}
+			fpsEl.innerHTML = (1000 / ( summ / iterable ))|0;
+		}
+	};
+
 	/* Интерфейс */
 	return  {
 		start: function (options) {
 			options = options || {type: 'xhr'};
+			
+			this.stop();
 
 			if (options.type === 'xhr') {
-				if (_xhr) {
-					dropXhr();
-				}
-
 				createXhr("GET");
+			}
+
+			if (options.type === 'socket') {
+				createSocket();
 			}
 		},
 
 		stop: function () {
 			dropXhr();
+			dropSocket();
 		},
 
 		set: function (cords) {
 			if (!isEqual(cords)) {
 				_coords = cords;
-				createXhr("POST", _coords);
+				if (_xhr) {
+					createXhr("POST", _coords);
+				} else if (_socket) {
+					_socket.emit('coordinates', _coords);
+				} else {
+					callbacks.forEach(function (callback) {
+						callback(cords);
+					});
+				}
+				fpsMeter();
 			}
 		},
 
