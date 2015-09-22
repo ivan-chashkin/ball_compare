@@ -73,9 +73,8 @@ var Service = (function (window) {
 		set: function (cords) {
 			if (!isEqual(cords)) {
 				_coords = cords;
+				createXhr("POST", _coords);
 			}
-
-			createXhr("POST", _coords);
 		},
 
 		onStatChange: function (callback) {
