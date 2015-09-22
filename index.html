@@ -25,8 +25,17 @@ html, body{
 <body>
 
 <script type="text/javascript" src="Ball.js"></script>
+<script type="text/javascript" src="Service.js"></script>
+
 <script type="text/javascript">
 var ballSource = new Ball('ball');
+
+Service.onStatChange(function (coords) {
+	console.log(coords);
+});
+Service.start();
+
+
 document.body.appendChild(ballSource.el);
 
 var ballTarget = new Ball('ball');

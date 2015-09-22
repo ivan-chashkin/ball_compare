@@ -38,7 +38,7 @@ var Service = (function (window) {
 
 				createXhr("GET");
 			} else {
-				alert(xmlhttp.statusText) // вызвать обработчик ошибки с текстом ответа
+				alert(_xhr.statusText) // вызвать обработчик ошибки с текстом ответа
 			}
 		}
 
@@ -46,7 +46,7 @@ var Service = (function (window) {
 			_xhr.send(type);
 		} else if( type === "POST") {
 			_xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-			_xhr.send(JSON.stringify(_coords);
+			_xhr.send(JSON.stringify(_coords));
 		}
 
 	}
