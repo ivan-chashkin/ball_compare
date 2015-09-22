@@ -30,11 +30,12 @@ var Service = (function (window) {
 				//ОБработать данные
 
 				var coords = JSON.parse(_xhr.responseText);
-				if (!isEqual(coords)) {
+				// if (!isEqual(coords)) {
+					_coords = coords;
 					callbacks.forEach(function (callback) {
 						callback(_coords);
 					});
-				}
+				// }
 
 				createXhr("GET");
 			} else {
@@ -62,7 +63,6 @@ var Service = (function (window) {
 				}
 
 				createXhr("GET");
-
 			}
 		},
 

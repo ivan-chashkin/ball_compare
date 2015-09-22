@@ -24,16 +24,14 @@ html, body{
 </head>
 <body>
 
-<script type="text/javascript" src="Ball.js"></script>
-<script type="text/javascript" src="Service.js"></script>
+<script type="text/javascript" src="/static/Ball.js"></script>
+<script type="text/javascript" src="/static/Service.js"></script>
 
 <script type="text/javascript">
 var ballSource = new Ball('ball');
 
-Service.onStatChange(function (coords) {
-	console.log(coords);
-});
-Service.start();
+
+
 
 
 document.body.appendChild(ballSource.el);
@@ -45,12 +43,26 @@ ballTarget.move({
 	x: window.innerWidth / 2,
 	y: 0
 });
-ballSource.on('move', function(data){
+
+Service.onStatChange(function (coords) {
+	console.log(coords)
 	ballTarget.move({
-		x: window.innerWidth / 2 + data.x,
-		y: 0 + data.y
+		x: window.innerWidth / 2 + coords.x,
+		y: coords.y
 	});
 });
+
+
+ballSource.on('move', function(data){
+	Service.set({
+		x: data.x,
+		y: data.y
+	});
+});
+
+
+// Server
+Service.start();
 </script>
 </body>
 </html>
