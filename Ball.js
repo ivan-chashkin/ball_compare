@@ -25,8 +25,9 @@ var Ball = function(className){
 		});
 	});
 	document.addEventListener('mousemove', function(evt){
-		if (this._started) {
-			evt.preventDefault()
+		if (_this._started) {
+			evt.preventDefault();
+
 			_this._move({
 				x: evt.clientX,
 				y: evt.clientY
@@ -56,6 +57,8 @@ var Ball = function(className){
 		});
 	});
 };
+
+
 Ball.prototype._start = function(data){
 	this._coords = {
 		x: data.x - this.coords.x,
@@ -80,6 +83,7 @@ Ball.prototype.move = function(data){
 	if ( this.coords.x != data.x || this.coords.y != data.y ) {
 		this.coords.x = data.x;
 		this.coords.y = data.y;
+
 		this.el.style.transform = 'translateX('+(this.coords.x).toFixed(4)+'px) translateY('+(this.coords.y).toFixed(4)+'px)'
 		this.el.style.webkitTransform = 'translateX('+(this.coords.x).toFixed(4)+'px) translateY('+(this.coords.y).toFixed(4)+'px)'
 		this.trigger('move', this.coords);
