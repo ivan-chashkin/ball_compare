@@ -77,25 +77,6 @@ var Service = (function (window) {
 		}
 	}
 
-	var fpsLastFrameTimes = [];
-	var fpsEl = document.createElement('span');
-	fpsEl.className = 'fps';
-	fpsEl.innerHTML = 0;
-	document.body.appendChild(fpsEl);
-	function fpsMeter() {
-		fpsLastFrameTimes.push(new Date());
-
-		if (fpsLastFrameTimes.length > 30) {
-			var summ = 0;
-			var iterable = 0;
-			for (var i = fpsLastFrameTimes.length - 31; i < fpsLastFrameTimes.length - 1; i++ ) {
-				iterable++;
-				summ += fpsLastFrameTimes[i+1] - fpsLastFrameTimes[i];
-			}
-			fpsEl.innerHTML = (1000 / ( summ / iterable ))|0;
-		}
-	};
-
 	/* Интерфейс */
 	return  {
 		start: function (options) {
@@ -129,7 +110,6 @@ var Service = (function (window) {
 						callback(cords);
 					});
 				}
-				fpsMeter();
 			}
 		},
 
